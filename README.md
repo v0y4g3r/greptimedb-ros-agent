@@ -21,6 +21,42 @@ This agent subscribes to ROS2 `/diagnostics` topics and writes the diagnostic da
 ROS2 /diagnostics → Agent (Rust) → GreptimeDB
 ```
 
+## Deployment
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Ubuntu Host                             │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │                     ROS2 Humble                            │ │
+│  │  ┌──────────────┐    ┌──────────────────────────────────┐  │ │
+│  │  │   Sensors    │───▶│  /diagnostics (DiagnosticArray)  │  │ │
+│  │  │  Actuators   │    └──────────────┬───────────────────┘  │ │
+│  │  │   Drivers    │                   │                      │ │
+│  │  └──────────────┘                   │                      │ │
+│  └─────────────────────────────────────┼──────────────────────┘ │
+│                                        │                        │
+│                                        ▼                        │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │              GreptimeDB ROS Agent (Rust)                   │ │
+│  │                                                            │ │
+│  │  • Subscribe to /diagnostics                               │ │
+│  │  • Convert to time-series records                          │ │
+│  │  • Batch & flush to GreptimeDB                             │ │
+│  └─────────────────────────────────────┬──────────────────────┘ │
+│                                        │                        │
+│                                        │ gRPC (port 4001)       │
+│                                        ▼                        │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │                    GreptimeDB                              │ │
+│  │                                                            │ │
+│  │  Ports: 4000 (HTTP), 4001 (gRPC), 4002 (MySQL)             │ │
+│  │  Schema-less time-series storage                           │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 The agent:
 1. Subscribes to the configured ROS2 topic
 2. Converts each `DiagnosticStatus` to a row insert request
