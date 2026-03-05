@@ -143,4 +143,4 @@ The schema is dynamic - additional key-value pairs in the diagnostic are added a
 
 ## License
 
-MIT
+[Apache License 2.0](https://apache.org/licenses/LICENSE-2.0.txt)
