@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let greptimedb = GreptimeWriter::new(&config.greptimedb_endpoint);
 
     // Set up ROS2 subscriber (spawns async task for message processing)
-    let node = setup_subscriber(&config.topic, buffer.clone())?;
+    let mut node = setup_subscriber(&config.topic, buffer.clone())?;
 
     // Spawn ROS2 spin loop on a dedicated thread
     let handle = tokio::task::spawn_blocking(move || {

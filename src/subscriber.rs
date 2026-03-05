@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 use greptimedb_ingester::api::v1::RowInsertRequest;
 use r2r::QosProfile;
 use futures::StreamExt;
-use tracing::{info, error};
+use tracing::info;
 
 use crate::convert::convert_diagnostic_array;
 

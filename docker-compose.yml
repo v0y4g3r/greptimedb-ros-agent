@@ -1,0 +1,26 @@
+services:
+  greptimedb:
+    image: greptime/greptimedb:latest
+    command: standalone start --http-addr=0.0.0.0:4000 --rpc-addr=0.0.0.0:4001 --mysql-addr=0.0.0.0:4002
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+      - "4002:4002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  agent:
+    build: .
+    command: ["--greptimedb-endpoint", "greptimedb:4001", "--topic", "/diagnostics", "--interval", "2"]
+    depends_on:
+      greptimedb:
+        condition: service_healthy
+
+  test-publisher:
+    image: ros:humble
+    volumes:
+      - ./publish_test_diagnostics.py:/publish_test_diagnostics.py:ro
+    command: bash -c "source /opt/ros/humble/setup.bash && python3 /publish_test_diagnostics.py"

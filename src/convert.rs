@@ -25,7 +25,7 @@ pub fn sanitize_name(name: &str) -> String {
 }
 
 /// Convert diagnostic level byte to human-readable string.
-pub fn level_to_string(level: i8) -> &'static str {
+pub fn level_to_string(level: u8) -> &'static str {
     match level {
         0 => "OK",
         1 => "WARN",
